@@ -288,6 +288,38 @@ scroll_thumb.onmousedown = (event) => {
 
 
 
+// ON-WHEEL
+onwheel = (event) => {
+
+    if ( !scroll_thumb.classList.contains("scroll_enabled") ){
+        return;
+    }
+
+    const IS_UP = event.deltaY < 0;
+    let posY = scroll_thumb.offsetTop;
+    let max_value = scroll_track.offsetHeight - scroll_thumb.offsetHeight
+    posY = Math.clamp(posY, 0, max_value);
+    let step = 0;
+    let size = 1;
+
+    if ( MINECRAFT_ITEMS_GROUPS[CURRENT_SCREEN] ){
+
+        if ( CURRENT_SCREEN == 'all' ){
+            size = MINECRAFT_ITEMS.filter(e => e.label.toLowerCase().indexOf( inputText.value.toLowerCase() ) >= 0).length;
+        }else{
+            size = MINECRAFT_ITEMS_GROUPS[CURRENT_SCREEN].length;
+        }
+        
+        const MAX_STEP = Math.trunc(size/9) - 4;
+        posY = Math.clamp(posY + (IS_UP? -max_value/MAX_STEP : max_value/MAX_STEP), 0, max_value);
+        step = Math.round(posY / (max_value / MAX_STEP));
+        posY = step * (max_value / MAX_STEP);
+    }
+
+    scroll_thumb.style.top = posY  + 'px';
+    generateGridItems(CURRENT_SCREEN, step);
+}
+
 
 // MOVE
 onmousemove = (event) => {
