@@ -422,27 +422,32 @@ document.querySelectorAll(".slot").forEach(slot => {
     // KEY DOWN
     slot.onkeydown = (event) => {
 
-        if ( event.key.charCodeAt() >= 49 && event.key.charCodeAt() <= 57 && !event.repeat && tempSlot.firstElementChild == null ){
-            let groupSlot  = slot.parentElement.id;
-            let slotNumber = parseInt(event.key) - 1;
+        if ( !(event.key.charCodeAt() >= 49 && event.key.charCodeAt() <= 57 && !event.repeat && tempSlot.firstElementChild == null) ){
+            return;
+        }
+        
+        let groupSlot  = slot.parentElement.id;
+        let slotNumber = parseInt(event.key) - 1;
 
-            if ( groupSlot == "slot_all" && slot.firstElementChild != null ){
-                pickItem(slot.firstElementChild.getAttribute("item-name"), formatGetQty( slot.firstElementChild.getAttribute("pack") ), slotNumber);
+        if ( groupSlot == "slot_all" && slot.firstElementChild != null ){
+            pickItem(slot.firstElementChild.getAttribute("item-name"), formatGetQty( slot.firstElementChild.getAttribute("pack") ), slotNumber);
+            return;
+        }
+        
+        if ( groupSlot != "slot_armor" && slot.id != "slot_delete" ){
+            let clickedSlotFree = slot.firstElementChild == null;
+            let handSlotFree    = slot_hand.children[slotNumber].firstElementChild == null;
 
-            }else if ( groupSlot != "slot_armor" && slot.id != "slot_delete" ){
-                let clickedSlotFree = slot.firstElementChild == null;
-                let handSlotFree    = slot_hand.children[slotNumber].firstElementChild == null;
-
-                if ( clickedSlotFree && !handSlotFree ){
-                    slot.appendChild(slot_hand.children[slotNumber].firstElementChild);
-                }else if ( !clickedSlotFree && handSlotFree ){
-                    slot_hand.children[slotNumber].appendChild(slot.firstElementChild);
-                }else if ( !clickedSlotFree && !handSlotFree ){
-                    slot.appendChild(slot_hand.children[slotNumber].firstElementChild);
-                    slot_hand.children[slotNumber].appendChild(slot.firstElementChild);
-                }
+            if ( clickedSlotFree && !handSlotFree ){
+                slot.appendChild(slot_hand.children[slotNumber].firstElementChild);
+            }else if ( !clickedSlotFree && handSlotFree ){
+                slot_hand.children[slotNumber].appendChild(slot.firstElementChild);
+            }else if ( !clickedSlotFree && !handSlotFree ){
+                slot.appendChild(slot_hand.children[slotNumber].firstElementChild);
+                slot_hand.children[slotNumber].appendChild(slot.firstElementChild);
             }
         }
+         
     };
 
 
