@@ -754,89 +754,97 @@ document.querySelectorAll(".slot").forEach(slot => {
 
                 if ( slotQty > 1 ){
                     console.log("DIVIDE");
-                    let tempQty = Math.trunc(slotQty/2);
+                    let tempQty = Math.trunc(slotQty / 2);
                     tempSlotQty = slotQty - tempQty;
                     slotQty     = tempQty;
-                    slot.firstElementChild.innerHTML     = formatSetQty( slotQty );
+                    slot.firstElementChild.innerHTML = formatSetQty( slotQty );
                     let clone = slot.firstElementChild.cloneNode(true);
                     clone.innerHTML = formatSetQty(tempSlotQty);
                     tempSlot.appendChild(clone);
-                }else{
-                    console.log("PICK ITEM");
-
-                    if ( groupSlot == 'slot_all' ){
-                        let clone = slot.firstElementChild.cloneNode(true);
-                        clone.innerHTML = formatSetQty(slotQty);
-                        tempSlot.appendChild(clone);
-                    }else{
-                        tempSlot.appendChild(slot.firstElementChild);
-                    }
+                    return;
                 }
+                console.log("PICK ITEM");
+
+                if ( groupSlot == 'slot_all' ){
+                    let clone = slot.firstElementChild.cloneNode(true);
+                    clone.innerHTML = formatSetQty(slotQty);
+                    tempSlot.appendChild(clone);
+                    return;
+                }
+                 
+                tempSlot.appendChild(slot.firstElementChild);
 
             }else if ( slotFree && !tempSlotFree ){
 
-                if ( slot.id != "slot_delete" ){  
-                    console.log("PUT ONE AT FREE SLOT");
-
-                    if ( groupSlot != 'slot_all' ){
-
-                        if ( groupSlot == "slot_armor" ){
-                            let itemArmorFounded = Object.keys(MINECRAFT_ARMOR).find(e => e == tempSlot.firstElementChild.getAttribute("item-name"));
-                            let armorSlot = slot_armor.querySelector(`.slot[armor=${ MINECRAFT_ARMOR[itemArmorFounded] }]`);
-
-                            if ( MINECRAFT_ARMOR[itemArmorFounded] == slot.getAttribute("armor") && armorSlot.firstElementChild == null ){
-                                armorSlot.appendChild(tempSlot.firstElementChild);
-                            }
-                        }else{
-                            let clone = tempSlot.firstElementChild.cloneNode(true);
-                            clone.innerHTML = '';
-                            slot.appendChild(clone);
-
-                            if ( tempSlotQty - 1 > 0 ){
-                                tempSlot.firstElementChild.innerHTML = formatSetQty(tempSlotQty - 1);
-                            }else{
-                                tempSlot.innerHTML = '';
-                            }
-                        }
-                    } 
+                if ( slot.id == "slot_delete" || groupSlot == 'slot_all'){
+                    return;
                 }
+
+                console.log("PUT ONE AT FREE SLOT");
+
+                if ( groupSlot == "slot_armor" ){
+                    let itemArmorFounded = Object.keys(MINECRAFT_ARMOR).find(e => e == tempSlot.firstElementChild.getAttribute("item-name"));
+                    let armorSlot = slot_armor.querySelector(`.slot[armor=${ MINECRAFT_ARMOR[itemArmorFounded] }]`);
+
+                    if ( MINECRAFT_ARMOR[itemArmorFounded] == slot.getAttribute("armor") && armorSlot.firstElementChild == null ){
+                        armorSlot.appendChild(tempSlot.firstElementChild);
+                    }
+                    return;
+                }
+
+                let clone = tempSlot.firstElementChild.cloneNode(true);
+                clone.innerHTML = '';
+                slot.appendChild(clone);
+
+                if ( tempSlotQty - 1 > 0 ){
+                    tempSlot.firstElementChild.innerHTML = formatSetQty(tempSlotQty - 1);
+                    return;
+                }
+
+                tempSlot.innerHTML = '';
+                     
+                 
             }else if ( !slotFree && !tempSlotFree ){
 
                 if ( slot.firstElementChild.getAttribute("item-name") == tempSlot.firstElementChild.getAttribute("item-name") ){
                     console.log("PUT ONE AT USED SLOT");
 
-                    if ( slotQty + 1 <= pack && tempSlotQty > 0 ){
-
-                        if ( groupSlot != 'slot_all' ){
-                            slot.firstElementChild.innerHTML = slotQty + 1;
-                        }
-
-                        if ( tempSlotQty - 1 > 0 ){
-                            tempSlot.firstElementChild.innerHTML = formatSetQty(tempSlotQty - 1);
-                        }else{
-                            tempSlot.innerHTML = '';
-                        }
+                    if ( slotQty + 1 > pack || tempSlotQty <= 0 ){
+                        return;
                     }
-                }else{
-
-                    if ( groupSlot == 'slot_all' ){
-                        console.log("DELETE ITEM");
-                        tempSlot.innerHTML = '';
-                    }else{
-                        let canSwap = true;
-
-                        if ( groupSlot == "slot_armor" ){
-                            let itemArmorFounded = Object.keys(MINECRAFT_ARMOR).find(e => e == tempSlot.firstElementChild.getAttribute("item-name"));
-                            canSwap = MINECRAFT_ARMOR[itemArmorFounded] == slot.getAttribute("armor");
-                        }
-
-                        if ( canSwap ){
-                            console.log("SWAP");
-                            tempSlot.appendChild(slot.firstElementChild);
-                            slot.appendChild(tempSlot.firstElementChild);
-                        }
+                    
+                    if ( groupSlot != 'slot_all' ){
+                        slot.firstElementChild.innerHTML = slotQty + 1;
                     }
+
+                    if ( tempSlotQty - 1 > 0 ){
+                        tempSlot.firstElementChild.innerHTML = formatSetQty(tempSlotQty - 1);
+                        return;
+                    }
+
+                    tempSlot.innerHTML = '';
+                    return; 
+                } 
+
+                if ( groupSlot == 'slot_all' ){
+                    console.log("DELETE ITEM");
+                    tempSlot.innerHTML = '';
+                    return;
                 }
+
+                let canSwap = true;
+
+                if ( groupSlot == "slot_armor" ){
+                    let itemArmorFounded = Object.keys(MINECRAFT_ARMOR).find(e => e == tempSlot.firstElementChild.getAttribute("item-name"));
+                    canSwap = MINECRAFT_ARMOR[itemArmorFounded] == slot.getAttribute("armor");
+                }
+
+                if ( canSwap ){
+                    console.log("SWAP");
+                    tempSlot.appendChild(slot.firstElementChild);
+                    slot.appendChild(tempSlot.firstElementChild);
+                }
+                 
             } 
 
         }
