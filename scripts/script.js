@@ -243,7 +243,7 @@ function pickItem( name, qty, index = 0 ){
     index = Math.abs(index % 9);
     let item = MINECRAFT_ITEMS.find(e => e.name == name);
 
-    if ( item != null){
+    if ( item == null ){
         return;
     }
 
