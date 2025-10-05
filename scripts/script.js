@@ -246,7 +246,7 @@ function pickItem( name, qty, index = 0 ){
     if ( item != null){
         return;
     }
-    
+
     let item_element = document.createElement('div');
     item_element.classList.add("item");
     item_element.setAttribute("item-name", item.name);
@@ -345,26 +345,33 @@ document.querySelectorAll(".tab").forEach(e => {
 
     e.onmousedown = (event) => {
 
-        if ( event.button == 0 && !e.classList.contains("tab_active") ){
-            CURRENT_SCREEN = e.getAttribute("group");
-            scroll_thumb.style.top = '0px';
-
-            if ( CURRENT_SCREEN != 'survival' ){
-                generateGridItems(CURRENT_SCREEN, 0);
-            }
-
-            document.querySelectorAll(".tab_active").forEach(el => el.classList.remove("tab_active"));
-            e.classList.add("tab_active");
-            let group = e.getAttribute("group");
-
-            if ( group == "all" ){
-                setScreen('search');
-            }else if ( group == "survival" ){
-                setScreen('survival');
-            }else{
-                setScreen('all');
-            }
+        if ( event.button != 0 || e.classList.contains("tab_active") ){
+            return;
         }
+
+        CURRENT_SCREEN = e.getAttribute("group");
+        scroll_thumb.style.top = '0px';
+
+        if ( CURRENT_SCREEN != 'survival' ){
+            generateGridItems(CURRENT_SCREEN, 0);
+        }
+
+        document.querySelectorAll(".tab_active").forEach(el => el.classList.remove("tab_active"));
+        e.classList.add("tab_active");
+        let group = e.getAttribute("group");
+
+        switch (group) {
+            case 'all':
+                setScreen('search');
+                break;
+            case 'survival':
+                setScreen('survival');
+                break;
+            default:
+                setScreen('all');
+                break;
+        }
+
     };
 
 
