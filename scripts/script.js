@@ -585,54 +585,71 @@ document.querySelectorAll(".slot").forEach(slot => {
 
                     if ( slot.id == "slot_delete" ){
                         clearInventory();
-                    }else if ( !slotFree ){
-                        let itemCanMove = true;
-                        let itemArmorFounded = Object.keys(MINECRAFT_ARMOR).find(e => e == slot.firstElementChild.getAttribute("item-name"));
-                        let armorSlot = slot_armor.querySelector(`.slot[armor=${ MINECRAFT_ARMOR[itemArmorFounded] }]`);
+                        return;
+                    }
+                    
+                    if ( slotFree ){
+                        return;
+                    }
+                    
+                    let itemCanMove = true;
+                    let itemArmorFounded = Object.keys(MINECRAFT_ARMOR).find(e => e == slot.firstElementChild.getAttribute("item-name"));
+                    let armorSlot = slot_armor.querySelector(`.slot[armor=${ MINECRAFT_ARMOR[itemArmorFounded] }]`);
 
-                        if ( armorSlot != null ){
+                    if ( armorSlot != null ){
 
-                            if ( armorSlot.firstElementChild == null ){
-                                armorSlot.appendChild(slot.firstElementChild);
-                                itemCanMove = false;
-                            }
-                        }
-
-                        if ( itemCanMove ){
-
-                            if ( groupSlot == "slot_hand" ){
-                                console.log("move item to INVENTORY");
-                                moveItemTo("slot_inventory", slot);
-                            }else if ( groupSlot == "slot_inventory" ){
-                                console.log("move item to HAND");
-                                moveItemTo("slot_hand", slot);
-                            }else if ( groupSlot == "slot_armor" ){
-                                moveItemTo("slot_inventory", slot);
-                                if ( slot.firstElementChild != null ){
-                                    moveItemTo("slot_hand", slot);
-                                }
-                            }
+                        if ( armorSlot.firstElementChild == null ){
+                            armorSlot.appendChild(slot.firstElementChild);
+                            itemCanMove = false;
                         }
                     }
-                }else{
 
-                    if ( groupSlot == "slot_all" ){
-
-                        if ( !slotFree && tempSlotFree ){
-                            let clone = slot.firstElementChild.cloneNode(true); 
-                            clone.innerHTML = formatSetQty(pack);
-                            tempSlot.appendChild(clone);
-                        }else if ( !tempSlotFree ){
-
-                            if ( slot.firstElementChild.getAttribute("item-name") != tempSlot.firstElementChild.getAttribute("item-name") ){
-                                tempSlot.innerHTML = '';
-                            }
-                        }
-
-                    }else{
-                        slot.innerHTML = '';
+                    if ( !itemCanMove ){
+                        return;
                     }
+                    
+                    if ( groupSlot == "slot_hand" ){
+                        console.log("move item to INVENTORY");
+                        moveItemTo("slot_inventory", slot);
+                    }else if ( groupSlot == "slot_inventory" ){
+                        console.log("move item to HAND");
+                        moveItemTo("slot_hand", slot);
+                    }else if ( groupSlot == "slot_armor" ){
+                        moveItemTo("slot_inventory", slot);
+
+                        if ( slot.firstElementChild != null ){
+                            moveItemTo("slot_hand", slot);
+                        }
+                    }
+                    
+                    return;
+                     
                 }
+
+
+
+                if ( groupSlot != "slot_all" ){
+                    slot.innerHTML = '';
+                    return;
+                }
+                
+                if ( !slotFree && tempSlotFree ){
+                    let clone = slot.firstElementChild.cloneNode(true); 
+                    clone.innerHTML = formatSetQty(pack);
+                    tempSlot.appendChild(clone);
+                    return;
+                }
+                
+                if ( tempSlotFree ){
+                    return;
+                }
+
+                if ( slot.firstElementChild.getAttribute("item-name") != tempSlot.firstElementChild.getAttribute("item-name") ){
+                    tempSlot.innerHTML = '';
+                }
+
+                     
+                 
             }
 
 
@@ -647,67 +664,83 @@ document.querySelectorAll(".slot").forEach(slot => {
                         let clone = slot.firstElementChild.cloneNode(true);
                         clone.innerHTML = formatSetQty(slotQty);
                         tempSlot.appendChild(clone);
-                    }else{
-                        tempSlot.appendChild(slot.firstElementChild);
+                        return;
                     }
+                    
+                    tempSlot.appendChild(slot.firstElementChild);
+                    return;
 
-                }else if ( slotFree && !tempSlotFree ){
+                }
+                
+                if ( slotFree && !tempSlotFree ){
 
                     if ( groupSlot == 'slot_all' ){
                         tempSlot.innerHTML = '';
-                    }else if ( slot.id != "slot_delete" ){
-                        console.log("PUT ITEM AT FREE SLOT");
+                        return;
+                    }
+                    
+                    if ( slot.id == "slot_delete" ){
+                        return;
+                    }
+                    
+                    console.log("PUT ITEM AT FREE SLOT");
 
-                        if ( groupSlot == "slot_armor" ){
-                            let itemArmorFounded = Object.keys(MINECRAFT_ARMOR).find(e => e == tempSlot.firstElementChild.getAttribute("item-name"));
-                            let armorSlot = slot_armor.querySelector(`.slot[armor=${ MINECRAFT_ARMOR[itemArmorFounded] }]`);
+                    if ( groupSlot == "slot_armor" ){
+                        let itemArmorFounded = Object.keys(MINECRAFT_ARMOR).find(e => e == tempSlot.firstElementChild.getAttribute("item-name"));
+                        let armorSlot = slot_armor.querySelector(`.slot[armor=${ MINECRAFT_ARMOR[itemArmorFounded] }]`);
 
-                            if ( MINECRAFT_ARMOR[itemArmorFounded] == slot.getAttribute("armor") && armorSlot.firstElementChild == null ){
-                                armorSlot.appendChild(tempSlot.firstElementChild);
-                            }
-                        }else{
-                            slot.appendChild(tempSlot.firstElementChild);
+                        if ( MINECRAFT_ARMOR[itemArmorFounded] == slot.getAttribute("armor") && armorSlot.firstElementChild == null ){
+                            armorSlot.appendChild(tempSlot.firstElementChild);
                         }
+                        return;
                     }
 
-                }else if ( !slotFree && !tempSlotFree ){
+                    slot.appendChild(tempSlot.firstElementChild);
+                    return;
 
-                    if ( slot.firstElementChild.getAttribute("item-name") == tempSlot.firstElementChild.getAttribute("item-name") ){
-
-                        if ( slotQty + tempSlotQty <= pack && groupSlot != 'slot_all' ){
-                            console.log("PUT ITEM AT USED SLOT: NO REMAINS");
-                            tempSlot.innerHTML = '';
-                            slot.firstElementChild.innerHTML = slotQty + tempSlotQty;
-                        }else if ( tempSlotQty + 1 <= pack && groupSlot == 'slot_all' ){
-                            tempSlot.firstElementChild.innerHTML = formatSetQty(tempSlotQty + 1);
-                        }else if ( groupSlot != 'slot_all' ){
-                            console.log("PUT ITEM AT USED SLOT: REMAINS");
-                            tempSlotQty -= pack - slotQty;
-                            slot.firstElementChild.innerHTML     = formatSetQty(pack);
-                            tempSlot.firstElementChild.innerHTML = formatSetQty(tempSlotQty);
-                        }
-
-                    }else{
-
-                        if ( groupSlot == 'slot_all' ){
-                            console.log("DELETE ITEM");
-                            tempSlot.innerHTML = '';
-                        }else{
-                            let canSwap = true;
-
-                            if ( groupSlot == "slot_armor" ){
-                                let itemArmorFounded = Object.keys(MINECRAFT_ARMOR).find(e => e == tempSlot.firstElementChild.getAttribute("item-name"));
-                                canSwap = MINECRAFT_ARMOR[itemArmorFounded] == slot.getAttribute("armor");
-                            }
-
-                            if ( canSwap ){
-                                console.log("SWAP");
-                                tempSlot.appendChild(slot.firstElementChild);
-                                slot.appendChild(tempSlot.firstElementChild);
-                            }
-                        }
-                    }
                 }
+
+                if ( slotFree || tempSlotFree ){
+                    return;
+                }
+                
+                if ( slot.firstElementChild.getAttribute("item-name") == tempSlot.firstElementChild.getAttribute("item-name") ){
+
+                    if ( slotQty + tempSlotQty <= pack && groupSlot != 'slot_all' ){
+                        console.log("PUT ITEM AT USED SLOT: NO REMAINS");
+                        tempSlot.innerHTML = '';
+                        slot.firstElementChild.innerHTML = slotQty + tempSlotQty;
+                    }else if ( tempSlotQty + 1 <= pack && groupSlot == 'slot_all' ){
+                        tempSlot.firstElementChild.innerHTML = formatSetQty(tempSlotQty + 1);
+                    }else if ( groupSlot != 'slot_all' ){
+                        console.log("PUT ITEM AT USED SLOT: REMAINS");
+                        tempSlotQty -= pack - slotQty;
+                        slot.firstElementChild.innerHTML     = formatSetQty(pack);
+                        tempSlot.firstElementChild.innerHTML = formatSetQty(tempSlotQty);
+                    }
+                    return;
+                } 
+
+                if ( groupSlot == 'slot_all' ){
+                    console.log("DELETE ITEM");
+                    tempSlot.innerHTML = '';
+                    return;
+                }
+                let canSwap = true;
+
+                if ( groupSlot == "slot_armor" ){
+                    let itemArmorFounded = Object.keys(MINECRAFT_ARMOR).find(e => e == tempSlot.firstElementChild.getAttribute("item-name"));
+                    canSwap = MINECRAFT_ARMOR[itemArmorFounded] == slot.getAttribute("armor");
+                }
+
+                if ( canSwap ){
+                    console.log("SWAP");
+                    tempSlot.appendChild(slot.firstElementChild);
+                    slot.appendChild(tempSlot.firstElementChild);
+                }
+                         
+                     
+                 
             }
         }
 
