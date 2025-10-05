@@ -281,10 +281,43 @@ function pickItem( name, qty, index = 0 ){
 
 // SCROLL THUMB PRESS
 scroll_thumb.onmousedown = (event) => {
+    event.stopImmediatePropagation();
+
     if (scroll_thumb.classList.contains("scroll_enabled")){
         scroll_thumb.classList.add('scroll_pressed');
     }
 };
+
+
+// SCROLL TRACK PRESS
+scroll_track.onmousedown = (event) => {
+
+    if ( !scroll_thumb.classList.contains("scroll_enabled") ){
+        return;
+    }
+    scroll_thumb.classList.add('scroll_pressed');
+    let posY = event.clientY - (interface_wrapper.offsetTop + scroll_track.offsetTop + scroll_thumb.offsetHeight/2);
+    let max_value = scroll_track.offsetHeight - scroll_thumb.offsetHeight
+    posY = Math.clamp(posY, 0, max_value);
+    let step = 0;
+    let size = 1;
+
+    if ( MINECRAFT_ITEMS_GROUPS[CURRENT_SCREEN] ){
+
+        if ( CURRENT_SCREEN == 'all' ){
+            size = MINECRAFT_ITEMS.filter(e => e.label.toLowerCase().indexOf( inputText.value.toLowerCase() ) >= 0).length;
+        }else{
+            size = MINECRAFT_ITEMS_GROUPS[CURRENT_SCREEN].length;
+        }
+        
+        const MAX_STEP = Math.trunc(size/9) - 4;
+        step = Math.round(posY / (max_value / MAX_STEP));
+    }
+
+    scroll_thumb.style.top = posY  + 'px';
+    generateGridItems(CURRENT_SCREEN, step);
+
+}
 
 
 
