@@ -243,33 +243,32 @@ function pickItem( name, qty, index = 0 ){
     index = Math.abs(index % 9);
     let item = MINECRAFT_ITEMS.find(e => e.name == name);
 
-    if ( item ){
-
-        let item_element = document.createElement('div');
-        item_element.classList.add("item");
-        item_element.setAttribute("item-name", item.name);
-        item_element.setAttribute("item-label", item.label); 
-
-        if ( item.icon ){
-            item_element.style.backgroundPosition = `${-16 * item.icon[0]}px ${-16 * item.icon[1]}px`;
-        }else if ( item.animation ){
-            item_element.style.backgroundSize = '100%';
-            item_element.style.backgroundImage = `url(assets/${item.animation})`;
-        }
-
-        if ( item.pack ){
-            item_element.setAttribute("pack", item.pack);
-            if ( qty > item.pack ){
-                qty = item.pack;
-            }
-        }else{
-            qty = 1;
-        }
-        
-        item_element.innerHTML = (qty == 1)? null : qty;
-        slot_hand.children[index].innerHTML = '';
-        slot_hand.children[index].appendChild( item_element );
+    if ( item != null){
+        return;
     }
+    
+    let item_element = document.createElement('div');
+    item_element.classList.add("item");
+    item_element.setAttribute("item-name", item.name);
+    item_element.setAttribute("item-label", item.label); 
+
+    if ( item.icon ){
+        item_element.style.backgroundPosition = `${-16 * item.icon[0]}px ${-16 * item.icon[1]}px`;
+    }else if ( item.animation ){
+        item_element.style.backgroundSize = '100%';
+        item_element.style.backgroundImage = `url(assets/${item.animation})`;
+    }
+
+    if ( item.pack ){
+        item_element.setAttribute("pack", item.pack);
+        qty = Math.clamp(qty, 1, item.pack);
+    }else{
+        qty = 1;
+    }
+    
+    item_element.innerHTML = (qty == 1)? null : qty;
+    slot_hand.children[index].innerHTML = '';
+    slot_hand.children[index].appendChild( item_element );
 
 }
 
