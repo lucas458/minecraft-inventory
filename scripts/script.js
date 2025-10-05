@@ -475,8 +475,10 @@ document.querySelectorAll(".slot").forEach(slot => {
 
             setTooltipTitle(slot.firstElementChild.getAttribute("item-label"));
             setTooltipVisible(true);
-
-        }else if ( slot.id == "slot_delete" ){
+            return;
+        }
+        
+        if ( slot.id == "slot_delete" ){
             setTooltipTitle("Destruir Item");
             setTooltipSubTitle('');
             setTooltipVisible(true);
