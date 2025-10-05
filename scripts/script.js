@@ -851,11 +851,14 @@ document.querySelectorAll(".slot").forEach(slot => {
 
         // MIDDLE CLICK
         else if ( event.button == 1 ){
-            if ( !slotFree && tempSlotFree ){
-                let clone = slot.firstElementChild.cloneNode(true); 
-                clone.innerHTML = formatSetQty(pack);
-                tempSlot.appendChild(clone);
+
+            if ( slotFree || !tempSlotFree ){
+                return;
             }
+            
+            let clone = slot.firstElementChild.cloneNode(true); 
+            clone.innerHTML = formatSetQty(pack);
+            tempSlot.appendChild(clone); 
         }
 
 
