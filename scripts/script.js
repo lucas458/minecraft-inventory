@@ -51,7 +51,10 @@ function setScreen( name ){
         blocks_interface.classList.add('interface_active');
         blocks_interface.classList.toggle('search_mode', name == 'search');
         CURRENT_SCREEN = document.querySelector('.tab_active').getAttribute('group');
-    }else if ( name == 'survival' ){
+        return;
+    }
+    
+    if ( name == 'survival' ){
         survival_interface.classList.add('interface_active');
         CURRENT_SCREEN = document.querySelector('.tab_active').getAttribute('group');
     }
