@@ -191,41 +191,44 @@ function generateGridItems( group = 'all', offsetLine = 0 ){
 
         slot_all.children[i].innerHTML = '';
 
-        if ( MINECRAFT_ITEMS_GROUPS[group] ){
-            let founded_list = [];
-            
-            if ( group == 'all' ){ 
-                founded_list = MINECRAFT_ITEMS.filter(e => e.label.toLowerCase().indexOf( inputText.value.toLowerCase() ) >= 0).map(e => e.name);
-            }else{
-                founded_list = MINECRAFT_ITEMS_GROUPS[group];
-            }
-
-            scroll_thumb.classList.toggle('scroll_enabled', founded_list.length > 9*5);
-            let name = founded_list[i + offsetLine*9];
-            let item = MINECRAFT_ITEMS.find(e => e.name == name); 
-
-            if ( item ){
-                let item_element = document.createElement('div');
-                item_element.classList.add("item");
-                item_element.setAttribute("item-name", item.name);
-                item_element.setAttribute("item-label", item.label);
-
-                if ( item.icon ){
-                    item_element.style.backgroundPosition = `${-16 * item.icon[0]}px ${-16 * item.icon[1]}px`;
-                }else if ( item.animation ){
-                    item_element.style.backgroundSize = '100%';
-                    item_element.style.backgroundImage = `url(assets/${item.animation})`;
-                }
-
-                if ( item.pack ){
-                    item_element.setAttribute("pack", item.pack);
-                }
-                slot_all.children[i].appendChild(item_element);
-            }
-            
-        }else{
+        if ( MINECRAFT_ITEMS_GROUPS[group] == null ){
             scroll_thumb.classList.toggle('scroll_enabled', false);
+            continue;
         }
+        
+        let founded_list = [];
+        
+        if ( group == 'all' ){ 
+            founded_list = MINECRAFT_ITEMS.filter(e => e.label.toLowerCase().indexOf( inputText.value.toLowerCase() ) >= 0).map(e => e.name);
+        }else{
+            founded_list = MINECRAFT_ITEMS_GROUPS[group];
+        }
+
+        scroll_thumb.classList.toggle('scroll_enabled', founded_list.length > 9*5);
+        let name = founded_list[i + offsetLine*9];
+        let item = MINECRAFT_ITEMS.find(e => e.name == name); 
+
+        if ( item == null ){
+            continue;
+        }
+        
+        let item_element = document.createElement('div');
+        item_element.classList.add("item");
+        item_element.setAttribute("item-name", item.name);
+        item_element.setAttribute("item-label", item.label);
+
+        if ( item.icon ){
+            item_element.style.backgroundPosition = `${-16 * item.icon[0]}px ${-16 * item.icon[1]}px`;
+        }else if ( item.animation ){
+            item_element.style.backgroundSize = '100%';
+            item_element.style.backgroundImage = `url(assets/${item.animation})`;
+        }
+
+        if ( item.pack ){
+            item_element.setAttribute("pack", item.pack);
+        }
+
+        slot_all.children[i].appendChild(item_element);
 
     }
     
